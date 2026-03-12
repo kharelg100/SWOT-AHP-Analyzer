@@ -20,7 +20,7 @@ date-released: "2025-01-01"
 license: MIT
 repository-code: "https://github.com/gkharel/swot-ahp-analyzer"
 url: "https://swot-ahp-analyzer.netlify.app"
-doi: "10.5281/zenodo.XXXXXXX"
+doi: "10.5281/zenodo.18991287"
 keywords:
   - SWOT analysis
   - Analytic Hierarchy Process
