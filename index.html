@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWOT–AHP Strategy Analyzer — TCU</title>
+<meta name="author" content="Dr. Gehendra Kharel, Texas Christian University">
+<meta name="copyright" content="© 2025–2026 Dr. Gehendra Kharel, Texas Christian University. All rights reserved.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--tcu:#4d1979;--tcu2:#6b2fa0;--tcu3:#8b5fbf;--tcuL:#f3edf9;--tcuLL:#faf7fc;--w:#fff;--s50:#f8f9fb;--s100:#f1f3f5;--s200:#e2e5ea;--s300:#c8cdd5;--s400:#8c95a5;--s500:#5f6b7a;--s600:#3f4a5a;--s700:#2d3748;--s800:#1a2332;--g500:#16a34a;--g50:#f0fdf4;--r600:#dc2626;--sCol:#2ecc71;--wCol:#e74c3c;--oCol:#3498db;--tCol:#e67e22}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--s50);color:var(--s800)}
+.hdr{background:linear-gradient(135deg,#3a1160,var(--tcu),#6b2fa0);color:#fff;padding:28px 32px 22px}
+.hdr h1{font-size:26px;font-weight:800;letter-spacing:-.5px}.hdr p{margin-top:8px;font-size:16px;color:#d4bfe8}
+.hdr .contact{margin-top:10px;font-size:14px;color:#e0cff0}
+.hdr .contact a{color:#e8d5f5;text-decoration:none}.hdr .contact a:hover{text-decoration:underline}
+.upanel{padding:20px 32px;background:#fff;border-bottom:2px solid var(--tcuL)}
+.ugrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:800px}
+.ubox{border:2px dashed var(--s300);border-radius:10px;padding:16px;text-align:center;background:var(--s50);transition:.2s}
+.ubox.ok{border-color:var(--g500);background:var(--g50)}
+.ulbl{font-size:12px;font-weight:700;color:var(--s700);margin-bottom:4px}
+.udesc{font-size:11px;color:var(--s500);margin-bottom:8px;line-height:1.45}
+.ubtn{display:inline-block;padding:6px 18px;border-radius:8px;background:var(--tcu);color:#fff;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:.15s}
+.ubtn:hover{background:var(--tcu2)}.ubtn.ok{background:var(--g500)}
+.ubox input[type=file]{display:none}
+.uinfo{font-size:10px;color:var(--s400);margin-top:6px}
+.tl{font-size:10px;color:var(--tcu);cursor:pointer;text-decoration:underline;margin-top:4px;display:inline-block}
+.rt{display:inline-block;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700;margin-left:4px}
+.rq{background:#fee2e2;color:#991b1b}.op{background:var(--tcuL);color:var(--tcu)}
+.ctrls{margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ctrls label{font-size:12px;color:var(--s500)}
+.ctrls select{margin-left:8px;padding:4px 8px;border-radius:6px;border:1px solid var(--s300);font-size:12px}
+.rbtn{padding:9px 28px;border-radius:8px;border:none;background:var(--tcu);color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.rbtn:hover{background:var(--tcu2)}.rbtn:disabled{background:var(--s400);cursor:not-allowed}
+#btn-r{background:#16a34a;box-shadow:0 2px 8px rgba(22,163,74,.35)}#btn-r:hover:not(:disabled){background:#15803d;box-shadow:0 2px 12px rgba(22,163,74,.5)}#btn-r:disabled{background:#86efac;color:#f0fdf4;cursor:not-allowed;box-shadow:none}
+.dbtn{padding:8px 20px;border-radius:8px;border:2px solid var(--tcu3);background:var(--tcuLL);color:var(--tcu);font-size:12px;font-weight:700;cursor:pointer}
+.dbtn:hover{background:var(--tcuL)}
+.dlb{padding:5px 14px;border-radius:6px;border:1px solid var(--s300);background:var(--s50);font-size:11px;font-weight:600;color:var(--s600);cursor:pointer}
+.dlb:hover{background:var(--s200)}
+.hint{font-size:11px;color:var(--s400)}
+.results{padding:0 32px 32px}.hidden{display:none}
+.tbar{display:flex;gap:0;margin-top:20px;border-bottom:2px solid var(--s200);flex-wrap:wrap}
+.tbtn{padding:10px 18px;border:none;background:none;font-size:12px;font-weight:500;color:var(--s500);border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;transition:.1s}
+.tbtn.on{font-weight:700;color:var(--tcu);border-bottom-color:var(--tcu)}
+.tc{margin-top:16px}.tc h3{font-size:16px;font-weight:700;color:var(--s800);margin-bottom:12px}
+.tc h4{font-size:13px;font-weight:700;color:var(--s600);margin:0 0 8px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+thead tr{background:var(--tcuL)}
+th{padding:8px 10px;text-align:left;border-bottom:2px solid var(--tcu3);font-weight:700;color:var(--tcu)}
+td{padding:6px 10px;border-bottom:1px solid var(--s200)}
+tbody tr:nth-child(even){background:var(--tcuLL)}
+.mono{font-family:'Cascadia Code','Fira Code',Consolas,monospace}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.b-s{background:#d1fae5;color:#065f46}.b-w{background:#fee2e2;color:#991b1b}.b-o{background:#dbeafe;color:#1e40af}.b-t{background:#ffedd5;color:#9a3412}
+.nb{margin-top:12px;padding:12px;border-radius:8px;font-size:11px;line-height:1.5}
+.nb-i{background:var(--tcuLL);border:1px solid #d8b4fe;color:var(--tcu)}
+.sc{background:#fff;border-radius:10px;border:1px solid var(--s200);padding:16px;margin-bottom:16px}
+.sr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--s100)}
+.sr .k{color:var(--s500);font-size:12px}.sr .v{font-weight:700;font-size:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.fb{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ft{padding:16px 32px;border-top:2px solid var(--tcuL);font-size:11px;color:var(--s400);background:#fff}
+.dban{background:linear-gradient(90deg,var(--tcuLL),var(--tcuL));border:1px solid #c084fc;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--tcu)}
+.prog{width:100%;height:6px;border-radius:3px;background:var(--s200);margin:8px 0;overflow:hidden}
+.prog-bar{height:100%;border-radius:3px;background:var(--tcu);transition:width .3s}
+svg text{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif}
+@media(max-width:768px){.ugrid{grid-template-columns:1fr}.g2{grid-template-columns:1fr}.hdr,.upanel,.results,.ft{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<div class="hdr">
+<h1>SWOT–AHP & TOWS Strategy Analyzer</h1>
+<p>Robust SWOT–AHP prioritization with bootstrap uncertainty, scenario sensitivity & SPI strategy ranking — runs entirely in your browser</p>
+<div class="contact">Contact: <a href="mailto:g.kharel@tcu.edu">Dr. Gehendra Kharel (g.kharel@tcu.edu)</a> · Texas Christian University<br>&copy; 2025–2026 Dr. Gehendra Kharel. All rights reserved.</div>
+</div>
+<div class="upanel">
+<div class="ugrid">
+<div class="ubox" id="box-s1"><div class="ulbl">Survey I CSV <span class="rt rq">Required</span></div><div class="udesc">Within-category pairwise comparisons. One row per respondent, columns for each pair (e.g. S_S1_vs_S2). Values 1–9 on directional Saaty scale.</div><button class="ubtn" onclick="document.getElementById('f-s1').click()">Choose file</button><input type="file" id="f-s1" accept=".csv" onchange="loadFile(this,'s1')"><div class="uinfo">Columns: <b>S_S1_vs_S2, S_S1_vs_S3, ... T_T4_vs_T5</b> (40 comparisons)</div><span class="tl" onclick="dlTmpl('s1')">⬇ CSV template</span></div>
+<div class="ubox" id="box-s2"><div class="ulbl">Survey II CSV <span class="rt op">Optional</span></div><div class="udesc">SWOT category comparisons. One row per respondent, 6 columns for pairwise comparisons among S, W, O, T. If omitted, equal category weights are used.</div><button class="ubtn" onclick="document.getElementById('f-s2').click()">Choose file</button><input type="file" id="f-s2" accept=".csv" onchange="loadFile(this,'s2')"><div class="uinfo">Columns: <b>CAT_S_vs_W, CAT_S_vs_O, CAT_S_vs_T, CAT_W_vs_O, CAT_W_vs_T, CAT_O_vs_T</b></div><span class="tl" onclick="dlTmpl('s2')">⬇ CSV template</span></div>
+</div>
+<div class="ctrls">
+<label style="font-weight:700;color:var(--tcu);font-size:13px">Bootstrap replicates:<select id="sel-b"><option value="1000">1,000</option><option value="2000">2,000</option><option value="5000" selected>5,000</option><option value="10000">10,000</option><option value="20000">20,000</option></select></label>
+<button class="rbtn" id="btn-r" disabled onclick="run()" style="background:#16a34a">▶ Run Analysis</button>
+<button class="dbtn" onclick="demo()">▶ Run with demo data</button>
+<button class="dlb hidden" id="btn-xl" onclick="toXL()">⬇ Excel workbook</button>
+<button class="rbtn" id="btn-reset" onclick="resetAll()" style="background:#dc2626">⟲ Reset</button>
+<span class="hint" id="hint">Upload Survey I CSV or click "Run with demo data"</span>
+</div></div>
+<div class="results hidden" id="res"><div id="dbs"></div><div class="tbar" id="tbar"></div><div class="tc" id="tc"></div></div>
+<div class="ft">
+<div style="margin-bottom:12px">&copy; 2025–2026 Dr. Gehendra Kharel, Texas Christian University. All rights reserved.<br>SWOT–AHP & TOWS Strategy Analyzer · <a href="mailto:g.kharel@tcu.edu" style="color:var(--tcu)">g.kharel@tcu.edu</a> · All computation runs locally in your browser — no data is uploaded anywhere.</div>
+<details style="margin-top:8px;cursor:pointer">
+<summary style="font-weight:700;color:var(--tcu);font-size:12px">▸ Methodological References & Citations</summary>
+<div style="margin-top:10px;font-size:11px;line-height:1.7;color:var(--s600);max-width:900px">
+<p style="margin-bottom:8px"><b>Analytic Hierarchy Process (AHP):</b></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Saaty, T. L. (1977). A scaling method for priorities in hierarchical structures. <i>Journal of Mathematical Psychology</i>, 15(3), 234–281. <a href="https://doi.org/10.1016/0022-2496(77)90033-5" style="color:var(--tcu)">https://doi.org/10.1016/0022-2496(77)90033-5</a></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Saaty, T. L. (1989). Group decision making and the AHP. In <i>The Analytic Hierarchy Process: Applications and Studies</i> (pp. 59–67). Springer.</p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Saaty, T. L. (2008). Decision making with the analytic hierarchy process. <i>International Journal of Services Sciences</i>, 1(1), 83–98. <a href="https://doi.org/10.1504/IJSSCI.2008.017590" style="color:var(--tcu)">https://doi.org/10.1504/IJSSCI.2008.017590</a></p>
+<p style="margin-bottom:8px;margin-top:12px"><b>SWOT–AHP Hybrid (A'WOT):</b></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Kurttila, M., Pesonen, M., Kangas, J., & Kajanus, M. (2000). Utilizing the analytic hierarchy process (AHP) in SWOT analysis — a hybrid method and its application to a forest-certification case. <i>Forest Policy and Economics</i>, 1(1), 41–52. <a href="https://doi.org/10.1016/S1389-9341(99)00004-0" style="color:var(--tcu)">https://doi.org/10.1016/S1389-9341(99)00004-0</a></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Kajanus, M., Leskinen, P., Kurttila, M., & Kangas, J. (2012). Making use of MCDS methods in SWOT analysis — Lessons learnt in strategic natural resources management. <i>Forest Policy and Economics</i>, 20, 1–9. <a href="https://doi.org/10.1016/j.forpol.2012.03.005" style="color:var(--tcu)">https://doi.org/10.1016/j.forpol.2012.03.005</a></p>
+<p style="margin-bottom:8px;margin-top:12px"><b>Consistency Diagnostics:</b></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Saaty, T. L. (1977). <i>op. cit.</i> — Original derivation of CI, RI, and CR for judgmental consistency evaluation.</p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Ishizaka, A., & Labib, A. (2011). Review of the main developments in the analytic hierarchy process. <i>Expert Systems with Applications</i>, 38(11), 14336–14345. <a href="https://doi.org/10.1016/j.eswa.2011.04.143" style="color:var(--tcu)">https://doi.org/10.1016/j.eswa.2011.04.143</a></p>
+<p style="margin-bottom:8px;margin-top:12px"><b>Geometric Mean Aggregation:</b></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Aczél, J., & Saaty, T. L. (1983). Procedures for synthesizing ratio judgements. <i>Journal of Mathematical Psychology</i>, 27(1), 93–102. <a href="https://doi.org/10.1016/0022-2496(83)90028-7" style="color:var(--tcu)">https://doi.org/10.1016/0022-2496(83)90028-7</a></p>
+<p style="margin-bottom:8px;margin-top:12px"><b>TOWS Strategy Matrix:</b></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Weihrich, H. (1982). The TOWS matrix — A tool for situational analysis. <i>Long Range Planning</i>, 15(2), 54–66. <a href="https://doi.org/10.1016/0024-6301(82)90120-0" style="color:var(--tcu)">https://doi.org/10.1016/0024-6301(82)90120-0</a></p>
+<p style="margin-bottom:8px;margin-top:12px"><b>Bootstrap Resampling for AHP Uncertainty:</b></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Efron, B., & Tibshirani, R. J. (1993). <i>An Introduction to the Bootstrap</i>. Chapman & Hall/CRC.</p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Tóth, W., Vacik, H., Panagopoulos, T., & Varga, A. (2018). Sensitivity analysis and evaluation of forest management strategies with the AHP. <i>International Journal of the Analytic Hierarchy Process</i>, 10(2), 160–178.</p>
+<p style="margin-bottom:8px;margin-top:12px"><b>Rank Acceptability:</b></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Lahdelma, R., Hokkanen, J., & Salminen, P. (1998). SMAA — Stochastic multiobjective acceptability analysis. <i>European Journal of Operational Research</i>, 106(1), 137–143. <a href="https://doi.org/10.1016/S0377-2217(97)00163-X" style="color:var(--tcu)">https://doi.org/10.1016/S0377-2217(97)00163-X</a></p>
+<p style="margin-bottom:8px;margin-top:12px"><b>SWOT Analysis (general):</b></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Gürel, E., & Tat, M. (2017). SWOT analysis: A theoretical review. <i>Journal of International Social Research</i>, 10(51), 994–1006. <a href="https://doi.org/10.17719/jisr.2017.1832" style="color:var(--tcu)">https://doi.org/10.17719/jisr.2017.1832</a></p>
+<p style="margin-left:16px;text-indent:-16px;margin-bottom:4px">Helms, M. M., & Nixon, J. (2010). Exploring SWOT analysis — where are we now? <i>Journal of Strategy and Management</i>, 3(3), 215–251. <a href="https://doi.org/10.1108/17554251011064837" style="color:var(--tcu)">https://doi.org/10.1108/17554251011064837</a></p>
+</div>
+</details>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+const D={s1:null,s2:null};let RR=null,AT='consistency';
+const TCU='#4d1979',TCUL='#f3edf9';
+const CATS=['S','W','O','T'],CAT_N={S:'Strengths',W:'Weaknesses',O:'Opportunities',T:'Threats'};
+const CAT_C={S:'#2ecc71',W:'#e74c3c',O:'#3498db',T:'#e67e22'};
+const SAATY={1:9,2:7,3:5,4:3,5:1,6:1/3,7:1/5,8:1/7,9:1/9};
+const RI_T={1:0,2:0,3:.58,4:.90,5:1.12,6:1.24,7:1.32,8:1.41,9:1.45,10:1.49};
+const F=(v,d=1)=>v==null||isNaN(v)?'—':v.toFixed(d);
+
+// Default TOWS strategies
+const DEF_STRATS={
+'SO-1 Local stewardship pathway':['S3','S4','O3','O2'],
+'SO-2 Scalable program kits':['S1','S5','O3','O4'],
+'SO-3 Policy-relevant education':['S3','S4','O5','O3'],
+'ST-1 Localize climate action':['S3','S4','T3','O3'],
+'ST-2 Evidence pipeline':['S2','S1','T4','W2'],
+'ST-3 Navigate opposition':['S5','S3','S4','T5'],
+'WO-1 Co-delivery partnerships':['W1','W3','O2','O3'],
+'WO-2 Low-cost post-visit engagement':['W1','W2','O1','T1'],
+'WO-3 Evaluation partnerships':['W2','O2','O3','T4'],
+'WT-1 Financial resilience':['W1','T2','T3'],
+'WT-2 Adult learning redesign':['W4','T1','S4'],
+'WT-3 Accurate messaging':['W5','T5','T4']};
+
+// Default factor labels
+const DEF_LABELS={
+S1:'Content development',S2:'Research programs',S3:'Hands-on engagement',S4:'Emotional connection',S5:'Personnel expertise',
+W1:'Resource scarcity',W2:'Evaluation difficulty',W3:'Personnel gaps',W4:'Adult education gaps',W5:'Oversimplification',
+O1:'Virtual/social media',O2:'School partnerships',O3:'Local community programs',O4:'Tourist engagement',O5:'Policy influence',
+T1:'Short-term experiences',T2:'Funding instability',T3:'Climate change',T4:'Education effectiveness doubts',T5:'Political opposition'};
+
+// ═══════════════════════════════════════════════════════════════
+// FILE HANDLING
+// ═══════════════════════════════════════════════════════════════
+function loadFile(inp,k){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=function(e){D[k]=Papa.parse(e.target.result.trim(),{header:true,skipEmptyLines:true,dynamicTyping:true}).data;const b=document.getElementById('box-'+k);b.classList.add('ok');b.querySelector('.ubtn').textContent='✓ '+f.name;b.querySelector('.ubtn').classList.add('ok');b.querySelector('.uinfo').textContent=D[k].length+' respondents';chk();};r.readAsText(f);}
+function chk(){document.getElementById('btn-r').disabled=!D.s1;document.getElementById('hint').textContent=D.s1?'Ready — click Run Analysis':'Upload Survey I CSV to proceed';}
+function resetAll(){D.s1=null;D.s2=null;RR=null;AT='consistency';['s1','s2'].forEach(k=>{const b=document.getElementById('box-'+k);b.classList.remove('ok');b.querySelector('.ubtn').textContent='Choose file';b.querySelector('.ubtn').classList.remove('ok');document.getElementById('f-'+k).value='';});document.getElementById('btn-r').disabled=true;document.getElementById('btn-xl').classList.add('hidden');document.getElementById('res').classList.add('hidden');document.getElementById('hint').textContent='Upload Survey I CSV or click "Run with demo data"';}
+
+function dlTmpl(t){let c='';const fids=CATS.flatMap(cat=>[1,2,3,4,5].map(i=>cat+i));if(t==='s1'){const hdr=['respondent_id'];CATS.forEach(cat=>{const fl=[1,2,3,4,5].map(i=>cat+i);for(let i=0;i<fl.length;i++)for(let j=i+1;j<fl.length;j++)hdr.push(cat+'_'+fl[i]+'_vs_'+fl[j]);});c=hdr.join(',')+'\n1,'+hdr.slice(1).map(()=>'5').join(',');}else{c='CAT_S_vs_W,CAT_S_vs_O,CAT_S_vs_T,CAT_W_vs_O,CAT_W_vs_T,CAT_O_vs_T\n3,4,3,5,4,5';}const b=new Blob([c],{type:'text/csv'});const a=document.createElement('a');a.download=t+'_template.csv';a.href=URL.createObjectURL(b);a.click();}
+
+// ═══════════════════════════════════════════════════════════════
+// AHP ENGINE
+// ═══════════════════════════════════════════════════════════════
+function pairs(n){const p=[];for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)p.push([i,j]);return p;}
+
+function gmMatrix(respList,n){
+  const m=Array.from({length:n},()=>new Float64Array(n).fill(1));
+  pairs(n).forEach(([i,j])=>{
+    const vals=respList.map(r=>r[[i,j]]).filter(v=>v&&v>0&&isFinite(v));
+    if(vals.length){const gm=Math.exp(vals.reduce((s,v)=>s+Math.log(v),0)/vals.length);m[i][j]=gm;m[j][i]=1/gm;}
+  });return m;
+}
+
+function eigWeights(m){
+  const n=m.length;let w=new Float64Array(n).fill(1/n);
+  for(let iter=0;iter<100;iter++){
+    const nw=new Float64Array(n);
+    for(let i=0;i<n;i++){for(let j=0;j<n;j++)nw[i]+=m[i][j]*w[j];}
+    const s=nw.reduce((a,b)=>a+b,0);for(let i=0;i<n;i++)nw[i]/=s;
+    let d=0;for(let i=0;i<n;i++)d+=Math.abs(nw[i]-w[i]);w=nw;if(d<1e-10)break;
+  }return Array.from(w);
+}
+
+function consistency(m){
+  const n=m.length,w=eigWeights(m);
+  const Aw=w.map((_,i)=>m[i].reduce((s,v,j)=>s+v*w[j],0));
+  const lam=Aw.reduce((s,v,i)=>s+v/w[i],0)/n;
+  const CI=(lam-n)/(n-1||1),RI=RI_T[n]||1.49,CR=RI>0?CI/RI:0;
+  return{lambda_max:lam,CI,RI,CR};
+}
+
+function parseResp(data,cat,fids){
+  const ps=pairs(fids.length);
+  return data.map(row=>{
+    const r={};let ok=true;
+    ps.forEach(([i,j])=>{
+      const col=cat+'_'+fids[i]+'_vs_'+fids[j];
+      const v=row[col];
+      const s=SAATY[Math.round(Number(v))];
+      if(!s||!isFinite(s)){ok=false;return;}
+      r[[i,j]]=s;
+    });
+    return ok?r:null;
+  }).filter(Boolean);
+}
+
+function parseCatResp(data){
+  const ps=pairs(4);
+  return data.map(row=>{
+    const r={};let ok=true;
+    ps.forEach(([i,j])=>{
+      const col='CAT_'+CATS[i]+'_vs_'+CATS[j];
+      const v=row[col];
+      const s=SAATY[Math.round(Number(v))];
+      if(!s||!isFinite(s)){ok=false;return;}
+      r[[i,j]]=s;
+    });
+    return ok?r:null;
+  }).filter(Boolean);
+}
+
+function globalWeights(catW,localW){
+  const gw={};CATS.forEach(cat=>{
+    const cw=catW[cat]||.25;
+    Object.entries(localW[cat]||{}).forEach(([fid,lw])=>{gw[fid]=cw*lw;});
+  });return gw;
+}
+
+function scenarioW(sc,catW){
+  if(sc==='A')return catW;
+  if(sc==='B')return{S:.25,W:.25,O:.25,T:.25};
+  if(sc==='C')return{S:.1,W:.1,O:.1,T:.7};
+  if(sc==='D')return{S:.1,W:.1,O:.7,T:.1};
+  return catW;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOTSTRAP
+// ═══════════════════════════════════════════════════════════════
+function bootstrap(respByCat,fids,catResp,catW,B,onProgress){
+  const results=[];
+  const seed=42;let s=seed|0;
+  function rng(){s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}
+  function randInt(n){return Math.floor(rng()*n);}
+
+  for(let b=0;b<B;b++){
+    const localW={};
+    CATS.forEach(cat=>{
+      const rl=respByCat[cat],n=fids[cat].length;
+      if(!rl.length)return;
+      const sampled=Array.from({length:rl.length},()=>rl[randInt(rl.length)]);
+      const m=gmMatrix(sampled,n);
+      const w=eigWeights(m);
+      const lw={};fids[cat].forEach((f,i)=>{lw[f]=w[i];});
+      localW[cat]=lw;
+    });
+    let cw=catW;
+    if(catResp&&catResp.length>0){
+      const sampled=Array.from({length:catResp.length},()=>catResp[randInt(catResp.length)]);
+      const m=gmMatrix(sampled,4);
+      const w=eigWeights(m);
+      cw={};CATS.forEach((c,i)=>{cw[c]=w[i];});
+    }
+    results.push(globalWeights(cw,localW));
+    if(b%500===0&&onProgress)onProgress(b/B);
+  }
+  return results;
+}
+
+function rankAccept(bootR,allFids){
+  const n=allFids.length,B=bootR.length;
+  const wm=bootR.map(gw=>allFids.map(f=>gw[f]||0));
+  const summary={};
+  allFids.forEach((fid,fi)=>{
+    const ws=wm.map(r=>r[fi]);
+    const ranks=wm.map(r=>{const sorted=[...r].sort((a,b)=>b-a);return sorted.indexOf(r[fi])+1;});
+    ws.sort((a,b)=>a-b);
+    summary[fid]={
+      median:ws[Math.floor(ws.length*.5)],
+      ci_lo:ws[Math.floor(ws.length*.025)],
+      ci_hi:ws[Math.floor(ws.length*.975)],
+      p1:ranks.filter(r=>r===1).length/B,
+      p3:ranks.filter(r=>r<=3).length/B,
+      p5:ranks.filter(r=>r<=5).length/B,
+      er:ranks.reduce((a,b)=>a+b,0)/B
+    };
+  });
+  return summary;
+}
+
+function bootSPI(bootR,strats){
+  const B=bootR.length,sn=Object.keys(strats);
+  const sm=bootR.map(gw=>sn.map(s=>strats[s].reduce((sum,f)=>sum+(gw[f]||0),0)));
+  const summary={};
+  sn.forEach((name,si)=>{
+    const vals=sm.map(r=>r[si]).sort((a,b)=>a-b);
+    const ranks=sm.map(r=>{const sorted=[...r].sort((a,b)=>b-a);return sorted.indexOf(r[si])+1;});
+    summary[name]={
+      median:vals[Math.floor(vals.length*.5)],
+      ci_lo:vals[Math.floor(vals.length*.025)],
+      ci_hi:vals[Math.floor(vals.length*.975)],
+      p1:ranks.filter(r=>r===1).length/B,
+      p3:ranks.filter(r=>r<=3).length/B,
+      p5:ranks.filter(r=>r<=5).length/B
+    };
+  });
+  return summary;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DEMO DATA
+// ═══════════════════════════════════════════════════════════════
+function genDemo(){
+  let s=2024;function rng(){s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}
+  function pick(arr){return arr[Math.floor(rng()*arr.length)];}
+  const fids={};CATS.forEach(cat=>{fids[cat]=[1,2,3,4,5].map(i=>cat+i);});
+  const rows=[];
+  for(let r=0;r<13;r++){
+    const row={respondent_id:r+1};
+    CATS.forEach(cat=>{
+      pairs(5).forEach(([i,j])=>{
+        row[cat+'_'+fids[cat][i]+'_vs_'+fids[cat][j]]=pick([1,2,3,4,5,5,5,6,7,8,9]);
+      });
+    });
+    rows.push(row);
+  }
+  const rows2=[];
+  for(let r=0;r<12;r++){
+    const row={};
+    pairs(4).forEach(([i,j])=>{
+      row['CAT_'+CATS[i]+'_vs_'+CATS[j]]=pick([2,3,3,4,4,5,5,5,6,6,7]);
+    });
+    rows2.push(row);
+  }
+  return{s1:rows,s2:rows2,fids};
+}
+
+function demo(){
+  const d=genDemo();D.s1=d.s1;D.s2=d.s2;
+  ['s1','s2'].forEach(k=>{
+    const b=document.getElementById('box-'+k);b.classList.add('ok');
+    b.querySelector('.ubtn').textContent='✓ Demo';b.querySelector('.ubtn').classList.add('ok');
+    b.querySelector('.uinfo').textContent=D[k].length+' respondents (demo)';
+  });
+  document.getElementById('btn-r').disabled=false;document.getElementById('hint').textContent='';run();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SVG HELPERS
+// ═══════════════════════════════════════════════════════════════
+function hBar(items,title,W=700,catColors=true){
+  const ml=180,mr=70,mt=50,rh=26,H=mt+items.length*rh+30;
+  const maxV=Math.max(...items.map(d=>d.val))*1.15;
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-height:${H+10}px">`;
+  svg+=`<rect width="${W}" height="${H}" fill="white"/>`;
+  svg+=`<text x="${W/2}" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="${TCU}">${title}</text>`;
+  items.forEach((d,i)=>{
+    const y=mt+i*rh,bw=(d.val/maxV)*(W-ml-mr),col=catColors?CAT_C[d.id[0]]||'#8c95a5':TCU;
+    if(i%2===0)svg+=`<rect x="0" y="${y}" width="${W}" height="${rh}" fill="${TCUL}" opacity=".3"/>`;
+    svg+=`<text x="${ml-8}" y="${y+rh/2+4}" text-anchor="end" font-size="11" font-weight="600" fill="#2d3748">${d.label||d.id}</text>`;
+    svg+=`<rect x="${ml}" y="${y+4}" width="${Math.max(bw,2)}" height="${rh-8}" rx="4" fill="${col}" opacity=".85"/>`;
+    svg+=`<text x="${ml+bw+6}" y="${y+rh/2+4}" font-size="11" font-weight="700" fill="#2d3748">${F(d.val*100,1)}%</text>`;
+  });
+  svg+=`</svg>`;return svg;
+}
+
+function forestPlot(items,title,W=700){
+  const ml=180,mr=80,mt=50,rh=30,H=mt+items.length*rh+30;
+  const maxV=Math.max(...items.map(d=>d.hi))*1.15*100;
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-height:${H+10}px">`;
+  svg+=`<rect width="${W}" height="${H}" fill="white"/>`;
+  svg+=`<text x="${W/2}" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="${TCU}">${title}</text>`;
+  const tX=v=>ml+(v/maxV)*(W-ml-mr);
+  items.forEach((d,i)=>{
+    const y=mt+i*rh,col=CAT_C[d.id[0]]||TCU;
+    if(i%2===0)svg+=`<rect x="0" y="${y}" width="${W}" height="${rh}" fill="${TCUL}" opacity=".3"/>`;
+    svg+=`<text x="${ml-8}" y="${y+rh/2+4}" text-anchor="end" font-size="11" font-weight="600" fill="#2d3748">${d.label||d.id}</text>`;
+    svg+=`<line x1="${tX(d.lo*100)}" y1="${y+rh/2}" x2="${tX(d.hi*100)}" y2="${y+rh/2}" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`;
+    svg+=`<circle cx="${tX(d.med*100)}" cy="${y+rh/2}" r="5" fill="${col}" stroke="white" stroke-width="1.5"/>`;
+    svg+=`<text x="${W-mr+8}" y="${y+rh/2+4}" font-size="10" fill="#5f6b7a">${F(d.med*100,1)}%</text>`;
+  });
+  svg+=`</svg>`;return svg;
+}
+
+function heatmap(ranks,fids,scenarios,W=700){
+  const ml=180,mr=20,mt=50,rh=24,cw=(W-ml-mr)/scenarios.length;
+  const H=mt+fids.length*rh+30;
+  const maxR=fids.length;
+  function color(r){const t=r/maxR;const g=Math.round(255*(1-t)),rd=Math.round(180*t+75*(1-t)),b=Math.round(80*(1-t));return`rgb(${rd},${g},${b})`;}
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-height:${H+10}px">`;
+  svg+=`<rect width="${W}" height="${H}" fill="white"/>`;
+  svg+=`<text x="${W/2}" y="24" text-anchor="middle" font-size="15" font-weight="bold" fill="${TCU}">Rank Robustness Across Scenarios</text>`;
+  scenarios.forEach((sc,si)=>{
+    svg+=`<text x="${ml+si*cw+cw/2}" y="${mt-8}" text-anchor="middle" font-size="11" font-weight="700" fill="${TCU}">${sc}</text>`;
+  });
+  fids.forEach((fid,fi)=>{
+    const y=mt+fi*rh;
+    svg+=`<text x="${ml-8}" y="${y+rh/2+4}" text-anchor="end" font-size="10" font-weight="600" fill="#2d3748">${DEF_LABELS[fid]||fid}</text>`;
+    scenarios.forEach((sc,si)=>{
+      const r=ranks[fid]?.[sc]||maxR;
+      svg+=`<rect x="${ml+si*cw+1}" y="${y+1}" width="${cw-2}" height="${rh-2}" rx="3" fill="${color(r)}" opacity=".75"/>`;
+      svg+=`<text x="${ml+si*cw+cw/2}" y="${y+rh/2+4}" text-anchor="middle" font-size="10" font-weight="700" fill="white">${r}</text>`;
+    });
+  });
+  svg+=`</svg>`;return svg;
+}
+
+function dlSvg(id,fn){const el=document.getElementById(id);if(!el)return;const s=new XMLSerializer().serializeToString(el);const b=new Blob([s],{type:'image/svg+xml'});const a=document.createElement('a');a.download=fn;a.href=URL.createObjectURL(b);a.click();}
+
+// ═══════════════════════════════════════════════════════════════
+// RUN ANALYSIS
+// ═══════════════════════════════════════════════════════════════
+function run(){
+  const B=parseInt(document.getElementById('sel-b').value);
+  const fids={};CATS.forEach(cat=>{fids[cat]=[1,2,3,4,5].map(i=>cat+i);});
+  const allFids=CATS.flatMap(c=>fids[c]);
+
+  // Parse respondents
+  const respByCat={};let nResp={};
+  CATS.forEach(cat=>{
+    respByCat[cat]=parseResp(D.s1,cat,fids[cat]);
+    nResp[cat]=respByCat[cat].length;
+  });
+  const catResp=D.s2?parseCatResp(D.s2):[];
+
+  // Compute local weights + consistency
+  const localW={},consis={};
+  CATS.forEach(cat=>{
+    const m=gmMatrix(respByCat[cat],5);
+    const w=eigWeights(m);
+    const c=consistency(m);
+    const lw={};fids[cat].forEach((f,i)=>{lw[f]=w[i];});
+    localW[cat]=lw;consis[cat]=c;
+  });
+
+  // Category weights
+  let catW;
+  if(catResp.length>0){
+    const m=gmMatrix(catResp,4);
+    const w=eigWeights(m);
+    catW={};CATS.forEach((c,i)=>{catW[c]=w[i];});
+    consis['Categories']=consistency(m);
+  }else{
+    catW={S:.25,W:.25,O:.25,T:.25};
+  }
+
+  // Global weights
+  const gw=globalWeights(catW,localW);
+
+  // Scenario sensitivity
+  const scNames=['A','B','C','D'],scLabels={A:'Stakeholder',B:'Equal',C:'Threat-fwd',D:'Opportunity-fwd'};
+  const scRanks={};allFids.forEach(f=>{scRanks[f]={};});
+  const scGlobals={};
+  scNames.forEach(sc=>{
+    const sw=scenarioW(sc,catW);
+    const g=globalWeights(sw,localW);scGlobals[sc]=g;
+    const sorted=[...allFids].sort((a,b)=>(g[b]||0)-(g[a]||0));
+    sorted.forEach((f,i)=>{scRanks[f][sc]=i+1;});
+  });
+
+  // Bootstrap
+  const bootR=bootstrap(respByCat,fids,catResp,catW,B);
+  const bootSum=rankAccept(bootR,allFids);
+  const spiSum=bootSPI(bootR,DEF_STRATS);
+
+  // Store results
+  RR={fids,allFids,nResp,localW,consis,catW,catResp:catResp.length,gw,scRanks,scGlobals,bootSum,spiSum,B};
+
+  // Render
+  document.getElementById('res').classList.remove('hidden');
+  document.getElementById('btn-xl').classList.remove('hidden');
+  const tabs=['consistency','local','category','global','scenarios','bootstrap','spi'];
+  const tabL=['Consistency','Local Weights','Category Weights','Global Priorities','Scenarios','Bootstrap','TOWS & SPI'];
+  document.getElementById('tbar').innerHTML=tabs.map((t,i)=>`<button class="tbtn${t===AT?' on':''}" onclick="showTab('${t}')">${tabL[i]}</button>`).join('');
+  document.getElementById('dbs').innerHTML=`<div class="dban"><b>Analysis complete.</b> Survey I: ${Object.values(nResp).join('/')} valid respondents per category · Survey II: ${catResp.length||'N/A'} respondents · Bootstrap: ${B.toLocaleString()} replicates · 20 factors · 12 strategies</div>`;
+  showTab(AT);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB RENDERING
+// ═══════════════════════════════════════════════════════════════
+function showTab(t){
+  AT=t;
+  document.querySelectorAll('.tbtn').forEach(b=>{b.classList.toggle('on',b.textContent.toLowerCase().includes(t.substring(0,4))||b.onclick.toString().includes(t));});
+  document.querySelectorAll('.tbtn').forEach(b=>{b.className=b.className.replace(' on','');});
+  document.querySelectorAll('.tbtn').forEach(b=>{if(b.getAttribute('onclick')?.includes("'"+t+"'"))b.classList.add('on');});
+  const el=document.getElementById('tc');
+  if(t==='consistency')rConsistency(el);
+  else if(t==='local')rLocal(el);
+  else if(t==='category')rCategory(el);
+  else if(t==='global')rGlobal(el);
+  else if(t==='scenarios')rScenarios(el);
+  else if(t==='bootstrap')rBootstrap(el);
+  else if(t==='spi')rSPI(el);
+}
+
+function rConsistency(el){
+  let h='<h3>AHP Consistency Diagnostics</h3><div class="nb nb-i" style="margin-bottom:16px"><b>Consistency Ratio (CR) < 0.10</b> indicates acceptable judgmental consistency (Saaty, 1977). The eigenvalue-based consistency index CI = (λ<sub>max</sub> − n) / (n − 1) is normalized by the Random Index RI to yield CR = CI/RI. All matrices below should pass this threshold for reliable decision support (Ishizaka & Labib, 2011).</div><table><thead><tr><th>Matrix</th><th>n</th><th>λ<sub>max</sub></th><th>CI</th><th>RI</th><th>CR</th><th>Status</th></tr></thead><tbody>';
+  Object.entries(RR.consis).forEach(([k,c])=>{
+    const n=k==='Categories'?4:5;
+    const ok=c.CR<.10;
+    h+=`<tr><td style="font-weight:700">${CAT_N[k]||k}</td><td>${n}</td><td class="mono">${F(c.lambda_max,4)}</td><td class="mono">${F(c.CI,4)}</td><td class="mono">${F(c.RI,2)}</td><td class="mono" style="font-weight:700;color:${ok?'#16a34a':'#dc2626'}">${F(c.CR,4)}</td><td>${ok?'<span class="badge b-s">✓ Acceptable</span>':'<span class="badge b-w">⚠ Exceeds 0.10</span>'}</td></tr>`;
+  });
+  h+='</tbody></table>';
+  el.innerHTML=h;
+}
+
+function rLocal(el){
+  let h='<h3>Within-Category AHP Priorities</h3><div class="nb nb-i" style="margin-bottom:16px">Priority weights derived via the principal right eigenvector of each geometric-mean aggregated pairwise comparison matrix (Saaty, 1977; Aczél & Saaty, 1983). Group judgments aggregated using the geometric mean, which preserves reciprocity and is the unique aggregation rule satisfying AHP axioms.</div><div class="g2">';
+  CATS.forEach(cat=>{
+    const items=Object.entries(RR.localW[cat]).map(([f,w])=>({id:f,val:w,label:DEF_LABELS[f]||f})).sort((a,b)=>b.val-a.val);
+    h+=`<div>${hBar(items,CAT_N[cat]+' (n='+RR.nResp[cat]+')')}</div>`;
+  });
+  h+='</div>';el.innerHTML=h;
+}
+
+function rCategory(el){
+  let h='<h3>SWOT Category Weights</h3>';
+  if(!RR.catResp)h+='<div class="nb nb-i">No Survey II data — using equal weights (25% each).</div>';
+  else h+='<div class="nb nb-i" style="margin-bottom:12px">Category-level pairwise comparisons (Survey II) determine the relative importance of SWOT quadrants, following the two-stage SWOT–AHP design of Kurttila et al. (2000). Group judgments aggregated via geometric mean (Aczél & Saaty, 1983).</div>';
+  const items=CATS.map(c=>({id:c,val:RR.catW[c],label:CAT_N[c]})).sort((a,b)=>b.val-a.val);
+  h+=hBar(items,'SWOT Category Weights'+(RR.catResp?' (Survey II)':' (Equal)'));
+  h+='<div class="sc" style="margin-top:16px;max-width:400px">';
+  items.forEach(d=>{h+=`<div class="sr"><span class="k">${d.label}</span><span class="v mono">${F(d.val*100,1)}%</span></div>`;});
+  h+='</div>';el.innerHTML=h;
+}
+
+function rGlobal(el){
+  const items=RR.allFids.map(f=>({id:f,val:RR.gw[f]||0,label:DEF_LABELS[f]||f})).sort((a,b)=>b.val-a.val);
+  let h='<h3>Global Factor Priorities (Scenario A)</h3><div class="nb nb-i" style="margin-bottom:12px">Global weight = SWOT category weight × within-category local weight. This two-level multiplicative composition is the standard AHP synthesis procedure (Saaty, 1977, 2008; Kurttila et al., 2000).</div>';
+  h+=hBar(items,'Global Factor Priorities — Stakeholder Weighted');
+  h+='<table style="margin-top:16px"><thead><tr><th>Rank</th><th>Factor</th><th>Category</th><th>Description</th><th>Global Weight</th></tr></thead><tbody>';
+  items.forEach((d,i)=>{
+    const cat=d.id[0],bc='b-'+cat.toLowerCase();
+    h+=`<tr><td style="font-weight:700">${i+1}</td><td style="font-weight:600">${d.id}</td><td><span class="badge ${bc}">${CAT_N[cat]}</span></td><td>${d.label}</td><td class="mono" style="font-weight:700">${F(d.val*100,2)}%</td></tr>`;
+  });
+  h+='</tbody></table>';el.innerHTML=h;
+}
+
+function rScenarios(el){
+  const sorted=[...RR.allFids].sort((a,b)=>(RR.scRanks[a]?.A||20)-(RR.scRanks[b]?.A||20));
+  let h='<h3>Scenario Sensitivity Analysis</h3><div class="nb nb-i" style="margin-bottom:16px"><b>A</b> = Stakeholder-weighted · <b>B</b> = Equal weights · <b>C</b> = Threat-forward · <b>D</b> = Opportunity-forward. Lower rank = higher priority. Small rank range = robust factor. Scenario-based sensitivity testing follows SWOT–AHP best practice for evaluating how quadrant-weight assumptions influence global rankings (Kajanus et al., 2012; Kurttila et al., 2000).</div>';
+  h+=heatmap(RR.scRanks,sorted,['A','B','C','D']);
+  h+='<table style="margin-top:16px"><thead><tr><th>Factor</th><th>Description</th><th>Rank A</th><th>Rank B</th><th>Rank C</th><th>Rank D</th><th>Range</th></tr></thead><tbody>';
+  sorted.forEach(f=>{
+    const r=RR.scRanks[f],rng=Math.max(...Object.values(r))-Math.min(...Object.values(r));
+    h+=`<tr><td style="font-weight:600">${f}</td><td>${DEF_LABELS[f]||f}</td><td class="mono">${r.A}</td><td class="mono">${r.B}</td><td class="mono">${r.C}</td><td class="mono">${r.D}</td><td class="mono" style="font-weight:700">${rng}</td></tr>`;
+  });
+  h+='</tbody></table>';el.innerHTML=h;
+}
+
+function rBootstrap(el){
+  const sorted=Object.entries(RR.bootSum).sort((a,b)=>b[1].median-a[1].median);
+  const top10=sorted.slice(0,10);
+  const items=top10.map(([f,s])=>({id:f,label:DEF_LABELS[f]||f,med:s.median,lo:s.ci_lo,hi:s.ci_hi}));
+  let h=`<h3>Bootstrap Uncertainty (B=${RR.B.toLocaleString()})</h3><div class="nb nb-i" style="margin-bottom:16px">Respondent-level nonparametric bootstrap resampling (Efron & Tibshirani, 1993) quantifies uncertainty in AHP-derived priorities without requiring additional data collection. For each replicate, respondents are resampled with replacement, geometric means recomputed, and AHP weights recalculated. Rank acceptability probabilities follow the SMAA framework (Lahdelma et al., 1998; Tóth et al., 2018).</div>`;
+  h+=`<div class="g2"><div>${forestPlot(items,'Top 10 — Median + 95% CI')}</div><div>`;
+  // Rank acceptability stacked
+  h+='<h4>Rank Acceptability (top 10)</h4><table><thead><tr><th>Factor</th><th>Median %</th><th>95% CI</th><th>P(rank=1)</th><th>P(top-3)</th><th>P(top-5)</th><th>E[rank]</th></tr></thead><tbody>';
+  top10.forEach(([f,s])=>{
+    h+=`<tr><td style="font-weight:600">${f}</td><td class="mono">${F(s.median*100,2)}</td><td class="mono">${F(s.ci_lo*100,1)}–${F(s.ci_hi*100,1)}</td><td class="mono" style="font-weight:700">${F(s.p1,3)}</td><td class="mono">${F(s.p3,3)}</td><td class="mono">${F(s.p5,3)}</td><td class="mono">${F(s.er,2)}</td></tr>`;
+  });
+  h+='</tbody></table></div></div>';
+
+  // Full table
+  h+='<h4 style="margin-top:20px">All 20 Factors</h4><table><thead><tr><th>Rank</th><th>Factor</th><th>Category</th><th>Description</th><th>Median %</th><th>95% CI</th><th>P(rank=1)</th><th>P(top-3)</th><th>P(top-5)</th></tr></thead><tbody>';
+  sorted.forEach(([f,s],i)=>{
+    const bc='b-'+f[0].toLowerCase();
+    h+=`<tr><td>${i+1}</td><td style="font-weight:600">${f}</td><td><span class="badge ${bc}">${f[0]}</span></td><td>${DEF_LABELS[f]||f}</td><td class="mono">${F(s.median*100,2)}</td><td class="mono">${F(s.ci_lo*100,1)}–${F(s.ci_hi*100,1)}</td><td class="mono">${F(s.p1,3)}</td><td class="mono">${F(s.p3,3)}</td><td class="mono">${F(s.p5,3)}</td></tr>`;
+  });
+  h+='</tbody></table>';el.innerHTML=h;
+}
+
+function rSPI(el){
+  const sorted=Object.entries(RR.spiSum).sort((a,b)=>b[1].median-a[1].median);
+  const items=sorted.map(([name,s])=>({id:name,label:name,med:s.median,lo:s.ci_lo,hi:s.ci_hi}));
+  let h='<h3>TOWS Strategy Portfolio & SPI Rankings</h3>';
+  h+='<div class="nb nb-i" style="margin-bottom:16px"><b>Strategy Priority Index (SPI)</b> = sum of global weights of unique factors each strategy addresses. Higher SPI = strategy targets more important factors. Strategies are derived from a TOWS matrix (Weihrich, 1982), which systematically pairs internal factors (S, W) with external factors (O, T) to generate implementable actions. The hybrid SWOT–AHP–TOWS integration follows Kurttila et al. (2000) and Kajanus et al. (2012). Bootstrap provides uncertainty intervals for SPI rankings.</div>';
+  h+=forestPlot(items,'Strategy Priority Index (median + 95% CI)',750);
+  h+='<table style="margin-top:16px"><thead><tr><th>Rank</th><th>Strategy</th><th>TOWS</th><th>Mapped Factors</th><th>SPI Median</th><th>95% CI</th><th>P(top-1)</th><th>P(top-3)</th><th>P(top-5)</th></tr></thead><tbody>';
+  sorted.forEach(([name,s],i)=>{
+    const quad=name.substring(0,2);
+    const factors=DEF_STRATS[name]?.join(', ')||'';
+    h+=`<tr><td style="font-weight:700">${i+1}</td><td style="font-weight:600">${name}</td><td><span class="badge b-s">${quad}</span></td><td class="mono">${factors}</td><td class="mono" style="font-weight:700">${F(s.median,3)}</td><td class="mono">${F(s.ci_lo,3)}–${F(s.ci_hi,3)}</td><td class="mono">${F(s.p1,3)}</td><td class="mono">${F(s.p3,3)}</td><td class="mono">${F(s.p5,3)}</td></tr>`;
+  });
+  h+='</tbody></table>';
+
+  // TOWS matrix display
+  h+='<h4 style="margin-top:20px">TOWS Strategy Matrix</h4><table><thead><tr><th></th><th style="color:var(--oCol)">Opportunities (O)</th><th style="color:var(--tCol)">Threats (T)</th></tr></thead><tbody>';
+  h+='<tr><td style="font-weight:700;color:var(--sCol)">Strengths (S)</td><td style="font-size:11px;line-height:1.6">SO-1 Local stewardship pathway (S3,S4,O3,O2)<br>SO-2 Scalable program kits (S1,S5,O3,O4)<br>SO-3 Policy-relevant education (S3,S4,O5,O3)</td><td style="font-size:11px;line-height:1.6">ST-1 Localize climate action (S3,S4,T3,O3)<br>ST-2 Evidence pipeline (S2,S1,T4,W2)<br>ST-3 Navigate opposition (S5,S3,S4,T5)</td></tr>';
+  h+='<tr><td style="font-weight:700;color:var(--wCol)">Weaknesses (W)</td><td style="font-size:11px;line-height:1.6">WO-1 Co-delivery partnerships (W1,W3,O2,O3)<br>WO-2 Low-cost post-visit (W1,W2,O1,T1)<br>WO-3 Evaluation partnerships (W2,O2,O3,T4)</td><td style="font-size:11px;line-height:1.6">WT-1 Financial resilience (W1,T2,T3)<br>WT-2 Adult learning redesign (W4,T1,S4)<br>WT-3 Accurate messaging (W5,T5,T4)</td></tr>';
+  h+='</tbody></table>';
+  el.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXCEL EXPORT
+// ═══════════════════════════════════════════════════════════════
+function toXL(){
+  if(!RR)return;const wb=XLSX.utils.book_new();
+  // Local weights
+  const s1=[];CATS.forEach(cat=>{Object.entries(RR.localW[cat]).sort((a,b)=>b[1]-a[1]).forEach(([f,w])=>{s1.push({Category:cat,Factor:f,Description:DEF_LABELS[f]||f,'Local Weight (%)':+(w*100).toFixed(2)});});});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(s1),'Local Weights');
+  // Consistency
+  const s2=Object.entries(RR.consis).map(([k,c])=>({Matrix:CAT_N[k]||k,lambda_max:+c.lambda_max.toFixed(4),CI:+c.CI.toFixed(4),RI:+c.RI.toFixed(2),CR:+c.CR.toFixed(4),Status:c.CR<.1?'Acceptable':'Exceeds 0.10'}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(s2),'Consistency');
+  // Category weights
+  const s3=CATS.map(c=>({Category:CAT_N[c],'Weight (%)':+(RR.catW[c]*100).toFixed(2)}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(s3),'Category Weights');
+  // Global weights
+  const s4=RR.allFids.map(f=>({Factor:f,Category:f[0],Description:DEF_LABELS[f]||f,'Global Weight (%)':+((RR.gw[f]||0)*100).toFixed(2)})).sort((a,b)=>b['Global Weight (%)']-a['Global Weight (%)']);
+  s4.forEach((r,i)=>r.Rank=i+1);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(s4),'Global Weights');
+  // Scenario ranks
+  const s5=RR.allFids.map(f=>{const r=RR.scRanks[f];return{Factor:f,Description:DEF_LABELS[f]||f,Rank_A:r.A,Rank_B:r.B,Rank_C:r.C,Rank_D:r.D,Range:Math.max(...Object.values(r))-Math.min(...Object.values(r))};}).sort((a,b)=>a.Rank_A-b.Rank_A);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(s5),'Scenario Ranks');
+  // Bootstrap
+  const s6=Object.entries(RR.bootSum).sort((a,b)=>b[1].median-a[1].median).map(([f,s],i)=>({Rank:i+1,Factor:f,Description:DEF_LABELS[f]||f,'Median (%)':+(s.median*100).toFixed(2),'CI_Low (%)':+(s.ci_lo*100).toFixed(2),'CI_High (%)':+(s.ci_hi*100).toFixed(2),'P(rank=1)':+s.p1.toFixed(3),'P(top-3)':+s.p3.toFixed(3),'P(top-5)':+s.p5.toFixed(3),'E[rank]':+s.er.toFixed(2)}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(s6),'Bootstrap Factors');
+  // SPI
+  const s7=Object.entries(RR.spiSum).sort((a,b)=>b[1].median-a[1].median).map(([name,s],i)=>({Rank:i+1,Strategy:name,Factors:(DEF_STRATS[name]||[]).join(', '),SPI_Median:+s.median.toFixed(3),CI_Low:+s.ci_lo.toFixed(3),CI_High:+s.ci_hi.toFixed(3),'P(top-1)':+s.p1.toFixed(3),'P(top-3)':+s.p3.toFixed(3),'P(top-5)':+s.p5.toFixed(3)}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(s7),'SPI Rankings');
+  XLSX.writeFile(wb,'SWOT_AHP_Results.xlsx');
+}
+</script>
+</body>
+</html>

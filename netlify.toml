@@ -1,0 +1,39 @@
+# Netlify configuration for SWOT–AHP & TOWS Strategy Analyzer
+# Static HTML site — no build step required
+
+[build]
+  # No build command needed; index.html is self-contained
+  publish = "."
+
+# Security and performance headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'"
+
+# Cache static assets
+[[headers]]
+  for = "/*.csv"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.py"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=86400"
+
+# Redirects: ensure root serves index.html
+[[redirects]]
+  from = "/tool"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/analyzer"
+  to = "/index.html"
+  status = 200

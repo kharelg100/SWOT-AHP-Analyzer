@@ -1,0 +1,89 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "SWOT–AHP & TOWS Strategy Analyzer"
+abstract: >-
+  Browser-based and Python tool for robust SWOT–AHP prioritization
+  with respondent-level bootstrap uncertainty quantification,
+  multi-scenario sensitivity analysis, TOWS strategy translation,
+  and Strategy Priority Index (SPI) ranking. Designed for conservation
+  education, natural resource management, and strategic planning
+  applications.
+authors:
+  - family-names: Kharel
+    given-names: Gehendra
+    email: g.kharel@tcu.edu
+    affiliation: Texas Christian University
+    orcid: ""
+version: "1.0.0"
+date-released: "2025-01-01"
+license: MIT
+repository-code: "https://github.com/gkharel/swot-ahp-analyzer"
+url: "https://swot-ahp-analyzer.netlify.app"
+doi: "10.5281/zenodo.XXXXXXX"
+keywords:
+  - SWOT analysis
+  - Analytic Hierarchy Process
+  - AHP
+  - TOWS matrix
+  - strategic planning
+  - conservation education
+  - bootstrap uncertainty
+  - decision support
+  - pairwise comparison
+  - multi-criteria decision analysis
+references:
+  - type: article
+    title: "A scaling method for priorities in hierarchical structures"
+    authors:
+      - family-names: Saaty
+        given-names: Thomas L.
+    journal: "Journal of Mathematical Psychology"
+    volume: 15
+    issue: 3
+    start: 234
+    end: 281
+    year: 1977
+    doi: "10.1016/0022-2496(77)90033-5"
+  - type: article
+    title: >-
+      Utilizing the analytic hierarchy process (AHP) in SWOT analysis —
+      a hybrid method and its application to a forest-certification case
+    authors:
+      - family-names: Kurttila
+        given-names: Mikko
+      - family-names: Pesonen
+        given-names: Mauno
+      - family-names: Kangas
+        given-names: Jyrki
+      - family-names: Kajanus
+        given-names: Miika
+    journal: "Forest Policy and Economics"
+    volume: 1
+    issue: 1
+    start: 41
+    end: 52
+    year: 2000
+    doi: "10.1016/S1389-9341(99)00004-0"
+  - type: article
+    title: "The TOWS matrix — A tool for situational analysis"
+    authors:
+      - family-names: Weihrich
+        given-names: Heinz
+    journal: "Long Range Planning"
+    volume: 15
+    issue: 2
+    start: 54
+    end: 66
+    year: 1982
+    doi: "10.1016/0024-6301(82)90120-0"
+  - type: book
+    title: "An Introduction to the Bootstrap"
+    authors:
+      - family-names: Efron
+        given-names: Bradley
+      - family-names: Tibshirani
+        given-names: Robert J.
+    publisher:
+      name: "Chapman & Hall/CRC"
+    year: 1993
