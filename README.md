@@ -138,7 +138,7 @@ If you use this tool in published research, please cite:
   title        = {{SWOT–AHP \& TOWS Strategy Analyzer: Browser-based 
                    tool for robust strategic prioritization with 
                    bootstrap uncertainty quantification}},
-  year         = {2025},
+  year         = {2026},
   publisher    = {Zenodo},
   doi          = {10.5281/zenodo.18991287},
   url          = {https://doi.org/10.5281/zenodo.18991287}
