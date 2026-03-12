@@ -8,7 +8,7 @@
 
 > **Live tool (pick any):**
 > - **Netlify:** [https://swot-ahp-analyzer.netlify.app](https://swot-ahp-analyzer.netlify.app)
-> - **GitHub Pages:** [https://kharelg100.github.io/swot-ahp-analyzer](https://kharelg100.github.io/swot-ahp-analyzer/)
+> - **GitHub Pages:** [https://kharelg100.github.io/SWOT-AHP-Analyzer](https://kharelg100.github.io/swot-ahp-analyzer/)
 > - **Zenodo archive:** [https://doi.org/10.5281/zenodo.18991287](https://doi.org/10.5281/zenodo.18991287)
 
 ## Overview
