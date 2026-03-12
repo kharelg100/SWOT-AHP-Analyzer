@@ -2,13 +2,13 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18991287.svg)](https://doi.org/10.5281/zenodo.18991287)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/XXXXXXXX/deploy-status)](https://app.netlify.com/sites/swot-ahp-analyzer/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/3c30b6f5-6194-406c-b88a-96bcc0b55800/deploy-status)](https://app.netlify.com/projects/swot-ahp-analyzer/deploys)
 
 **Robust SWOT–AHP prioritization with bootstrap uncertainty quantification, multi-scenario sensitivity analysis, TOWS strategy translation, and Strategy Priority Index (SPI) ranking.**
 
 > **Live tool (pick any):**
 > - **Netlify:** [https://swot-ahp-analyzer.netlify.app](https://swot-ahp-analyzer.netlify.app)
-> - **GitHub Pages:** [https://kharelg100.github.io/swot-ahp-analyzer](https://gkharel.github.io/swot-ahp-analyzer)
+> - **GitHub Pages:** [https://kharelg100.github.io/swot-ahp-analyzer](https://kharelg100.github.io/swot-ahp-analyzer)
 > - **Zenodo archive:** [https://doi.org/10.5281/zenodo.18991287](https://doi.org/10.5281/zenodo.18991287)
 
 ## Overview
