@@ -18,7 +18,7 @@ authors:
 version: "1.0.0"
 date-released: "2025-01-01"
 license: MIT
-repository-code: "https://github.com/gkharel/swot-ahp-analyzer"
+repository-code: "https://github.com/kharelg100/swot-ahp-analyzer"
 url: "https://swot-ahp-analyzer.netlify.app"
 doi: "10.5281/zenodo.18991287"
 keywords:
