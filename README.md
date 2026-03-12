@@ -140,8 +140,8 @@ If you use this tool in published research, please cite:
                    bootstrap uncertainty quantification}},
   year         = {2025},
   publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.XXXXXXX},
-  url          = {https://doi.org/10.5281/zenodo.XXXXXXX}
+  doi          = {10.5281/zenodo.18991287},
+  url          = {https://doi.org/10.5281/zenodo.18991287}
 }
 ```
 
